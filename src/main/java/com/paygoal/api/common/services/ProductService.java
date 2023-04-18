@@ -28,4 +28,9 @@ public class ProductService {
     public ProductDto updateProduct(Long id, UpdateProductRequest updateProductRequest) {
         return ProductDto.of( this.productInternalService.update(id, updateProductRequest) );
     }
+
+    public void deleteProduct(Long id) {
+        this.productInternalService.delete(id);
+        return;
+    }
 }

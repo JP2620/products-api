@@ -48,4 +48,8 @@ public class ProductInternalService {
            throw new ProductNotFoundException();
         }
     }
+
+    public void delete(Long id) {
+        this.productRepository.deleteById(id);
+    }
 }

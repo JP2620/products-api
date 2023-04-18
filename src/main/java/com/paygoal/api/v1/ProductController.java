@@ -38,6 +38,12 @@ public class ProductController {
         return new ResponseEntity<>(this.productService.updateProduct(id, updateProductRequest), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable Long id) {
+        this.productService.deleteProduct(id);
+        return;
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private void productNotFoundHandler(ProductNotFoundException e) {}
