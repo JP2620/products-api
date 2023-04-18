@@ -52,4 +52,8 @@ public class ProductInternalService {
     public void delete(Long id) {
         this.productRepository.deleteById(id);
     }
+
+    public Optional<Product> getById(Long id) {
+        return this.productRepository.findById(id);
+    }
 }

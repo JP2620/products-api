@@ -44,6 +44,11 @@ public class ProductController {
         return;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        return new ResponseEntity<>(this.productService.getById(id), HttpStatus.OK);
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private void productNotFoundHandler(ProductNotFoundException e) {}
