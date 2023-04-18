@@ -5,6 +5,8 @@ import com.paygoal.api.common.dtos.Product.ProductDto;
 import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
 import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,5 +55,10 @@ public class ProductService {
         } else {
             throw new ProductNotFoundException();
         }
+    }
+
+    public Page<ProductDto> getPage(Pageable pageable) {
+        Page<Product> productPage = this.productInternalService.findAll(pageable);
+        return productPage.map(ProductDto::of);
     }
 }

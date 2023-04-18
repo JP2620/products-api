@@ -6,6 +6,8 @@ import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
 import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.model.Product;
 import com.paygoal.api.common.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +61,9 @@ public class ProductInternalService {
 
     public Optional<Product> getByName(String name) {
         return this.productRepository.findByName(name);
+    }
+
+    public Page<Product> findAll(Pageable pageable) {
+        return this.productRepository.findAll(pageable);
     }
 }

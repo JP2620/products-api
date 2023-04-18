@@ -5,7 +5,12 @@ import com.paygoal.api.common.dtos.Product.ProductDto;
 import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
 import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.services.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +57,17 @@ public class ProductController {
     @GetMapping("/name/{name}")
     public ResponseEntity<ProductDto> getProductByName(@PathVariable String name) {
         return new ResponseEntity<>(this.productService.getByName(name), HttpStatus.OK);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<ProductDto>> getProductPage(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction sortDirection
+            ) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortDirection, sortBy));
+        return new ResponseEntity<>(this.productService.getPage(pageable), HttpStatus.OK);
     }
 
     @ExceptionHandler
