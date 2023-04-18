@@ -1,12 +1,16 @@
 package com.paygoal.api.common.services;
 
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
+import com.paygoal.api.common.dtos.Product.ProductDto;
+import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
+import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.model.Product;
 import com.paygoal.api.common.repositories.ProductRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductInternalService {
@@ -29,5 +33,19 @@ public class ProductInternalService {
         newProduct.setDescription(createProductRequest.getDescription());
         newProduct.setName(createProductRequest.getName());
         return this.productRepository.save(newProduct);
+    }
+
+    public Product update(Long id, UpdateProductRequest updateProductRequest) {
+        Optional<Product> maybeProduct = this.productRepository.findById(id);
+        if (maybeProduct.isPresent()) {
+            Product product = maybeProduct.get();
+            product.setName(updateProductRequest.getName());
+            product.setPrice(updateProductRequest.getPrice());
+            product.setQuantity(updateProductRequest.getQuantity());
+            product.setDescription(updateProductRequest.getDescription());
+            return this.productRepository.save(product);
+        } else {
+           throw new ProductNotFoundException();
+        }
     }
 }

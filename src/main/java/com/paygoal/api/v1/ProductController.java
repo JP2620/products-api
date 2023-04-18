@@ -2,6 +2,8 @@ package com.paygoal.api.v1;
 
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
 import com.paygoal.api.common.dtos.Product.ProductDto;
+import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
+import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,4 +33,12 @@ public class ProductController {
         return new ResponseEntity<>(this.productService.createProduct(createProductRequest), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest updateProductRequest) {
+        return new ResponseEntity<>(this.productService.updateProduct(id, updateProductRequest), HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private void productNotFoundHandler(ProductNotFoundException e) {}
 }
