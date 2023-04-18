@@ -33,3 +33,11 @@ Response: ProductDto object.
 - **DELETE /api/v1/products/{id}**  
 Deletes the product with the given ID from the system.  
 Parameters: id - Long  
+
+- **GET /api/v1/products/page**
+Gets a page of products.
+Query parameters:
+pageNo (Integer): The page number (default: 0)
+pageSize (Integer): The page size (default: 10)
+sortBy (String): The field to sort by (default: "price")
+sortDirection (String): The sort direction (default: "DESC")
