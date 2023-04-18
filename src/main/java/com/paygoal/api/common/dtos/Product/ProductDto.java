@@ -1,6 +1,5 @@
-package com.paygoal.api.common.dtos;
+package com.paygoal.api.common.dtos.Product;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.paygoal.api.common.model.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
