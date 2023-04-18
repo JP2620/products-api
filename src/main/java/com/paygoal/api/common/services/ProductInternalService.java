@@ -56,4 +56,8 @@ public class ProductInternalService {
     public Optional<Product> getById(Long id) {
         return this.productRepository.findById(id);
     }
+
+    public Optional<Product> getByName(String name) {
+        return this.productRepository.findByName(name);
+    }
 }

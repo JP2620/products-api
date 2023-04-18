@@ -45,4 +45,13 @@ public class ProductService {
             throw new ProductNotFoundException();
         }
     }
+
+    public ProductDto getByName(String name) {
+        Optional<Product> maybeProduct = this.productInternalService.getByName(name);
+        if (maybeProduct.isPresent()) {
+            return ProductDto.of(maybeProduct.get());
+        } else {
+            throw new ProductNotFoundException();
+        }
+    }
 }
