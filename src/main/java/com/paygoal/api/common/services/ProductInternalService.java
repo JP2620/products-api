@@ -3,6 +3,7 @@ package com.paygoal.api.common.services;
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
 import com.paygoal.api.common.dtos.Product.ProductDto;
 import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
+import com.paygoal.api.common.exceptions.ProductAlreadyExistsException;
 import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.model.Product;
 import com.paygoal.api.common.repositories.ProductRepository;
@@ -29,6 +30,11 @@ public class ProductInternalService {
     }
 
     public Product create(CreateProductRequest createProductRequest) {
+        Optional<Product> maybeProduct = this.productRepository.findByName(createProductRequest.getName());
+        if (maybeProduct.isPresent()) {
+            throw new ProductAlreadyExistsException();
+        }
+
         Product newProduct = new Product();
         newProduct.setPrice(createProductRequest.getPrice());
         newProduct.setQuantity(createProductRequest.getQuantity());

@@ -3,6 +3,7 @@ package com.paygoal.api.v1;
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
 import com.paygoal.api.common.dtos.Product.ProductDto;
 import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
+import com.paygoal.api.common.exceptions.ProductAlreadyExistsException;
 import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.services.ProductService;
 import org.springframework.data.domain.Page;
@@ -73,4 +74,8 @@ public class ProductController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private void productNotFoundHandler(ProductNotFoundException e) {}
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    private void productAlreadyExistsHandler(ProductAlreadyExistsException e) {}
 }
