@@ -47,6 +47,9 @@ public class ProductInternalService {
         Optional<Product> maybeProduct = this.productRepository.findById(id);
         if (maybeProduct.isPresent()) {
             Product product = maybeProduct.get();
+            if (this.getByName(updateProductRequest.getName()).isPresent()) {
+                throw new ProductAlreadyExistsException();
+            }
             product.setName(updateProductRequest.getName());
             product.setPrice(updateProductRequest.getPrice());
             product.setQuantity(updateProductRequest.getQuantity());

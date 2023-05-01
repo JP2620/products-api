@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@ControllerAdvice(basePackageClasses = ExceptionHandlingController.class)
 public class ProductController {
 
     private final ProductService productService;
@@ -70,12 +71,4 @@ public class ProductController {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortDirection, sortBy));
         return new ResponseEntity<>(this.productService.getPage(pageable), HttpStatus.OK);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    private void productNotFoundHandler(ProductNotFoundException e) {}
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    private void productAlreadyExistsHandler(ProductAlreadyExistsException e) {}
 }
