@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
 import com.paygoal.api.common.dtos.Product.ProductDto;
 import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
+import com.paygoal.api.common.exceptions.ProductAlreadyExistsException;
 import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.model.Product;
 import com.paygoal.api.common.services.ProductInternalService;
@@ -14,19 +15,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @WebMvcTest(ProductController.class)
@@ -37,9 +35,6 @@ class ProductControllerTest {
 
 	@MockBean
 	private ProductService productService;
-
-	@MockBean
-	ProductInternalService productInternalService;
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -63,8 +58,13 @@ class ProductControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.price", Matchers.is(100)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.quantity", Matchers.is(10)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Test Description")));
+	}
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/2"))
+	@Test
+	public void testGetProductByIdShouldThrowProductNotFound() throws Exception {
+		Mockito.when(productService.getById(1L)).thenThrow(new ProductNotFoundException());
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/1"))
 				.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 
@@ -97,6 +97,29 @@ class ProductControllerTest {
 	}
 
 	@Test
+	public void testCreateProductShouldThrowProductAlreadyExistsException() throws Exception {
+		CreateProductRequest createProductRequest = new CreateProductRequest();
+		createProductRequest.setName("Test Product");
+		createProductRequest.setPrice(100L);
+		createProductRequest.setQuantity(10L);
+		createProductRequest.setDescription("Test Description");
+
+		Product product = new Product();
+		product.setId(1L);
+		product.setName("Test Product");
+		product.setPrice(100L);
+		product.setQuantity(10L);
+		product.setDescription("Test Description");
+
+		Mockito.when(productService.createProduct(Mockito.any(CreateProductRequest.class))).thenThrow(new ProductAlreadyExistsException());
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
+				.content(objectMapper.writeValueAsString(createProductRequest))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isConflict());
+	}
+
+	@Test
 	public void testUpdateProduct() throws Exception {
 		CreateProductRequest createProductRequest = new CreateProductRequest();
 		createProductRequest.setName("Test Product");
@@ -124,6 +147,40 @@ class ProductControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.price", Matchers.is(100)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.quantity", Matchers.is(10)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Test Description")));
+	}
+
+	@Test
+	public void testUpdateProductShouldThrowProductAlreadyExistsException() throws Exception {
+		UpdateProductRequest updateProductRequest = new UpdateProductRequest();
+		updateProductRequest.setName("Test Product");
+		updateProductRequest.setPrice(100L);
+		updateProductRequest.setQuantity(10L);
+		updateProductRequest.setDescription("Test Description");
+
+		Mockito
+				.when(productService.updateProduct(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
+				.thenThrow(new ProductAlreadyExistsException());
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/{id}", 1L)
+				.content(objectMapper.writeValueAsString(updateProductRequest))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isConflict());
+	}
+
+	@Test
+	public void testUpdateProductShouldThrowProductNotFoundException() throws Exception {
+		UpdateProductRequest updateProductRequest = new UpdateProductRequest();
+		updateProductRequest.setName("Test Product");
+		updateProductRequest.setPrice(100L);
+		updateProductRequest.setQuantity(10L);
+		updateProductRequest.setDescription("Test Description");
+
+		Mockito
+				.when(productService.updateProduct(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
+				.thenThrow(new ProductNotFoundException());
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/{id}", 1L)
+				.content(objectMapper.writeValueAsString(updateProductRequest))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 
 	@Test
@@ -182,6 +239,14 @@ class ProductControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.price", Matchers.is(100)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.quantity", Matchers.is(10)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Test Description")));
+	}
+
+	@Test
+	public void testGetProductByNameShouldThrowNotFoundException() throws Exception {
+		Mockito.when(productService.getByName(Mockito.anyString())).thenThrow(new ProductNotFoundException());
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/name/{name}", "Test Product"))
+				.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 
 	@Test
