@@ -1,4 +1,4 @@
-package com.paygoal.api;
+package com.paygoal.api.v1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
