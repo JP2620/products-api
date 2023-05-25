@@ -3,15 +3,12 @@ package com.paygoal.api.v1;
 import com.paygoal.api.common.dtos.Product.CreateProductRequest;
 import com.paygoal.api.common.dtos.Product.ProductDto;
 import com.paygoal.api.common.dtos.Product.UpdateProductRequest;
-import com.paygoal.api.common.exceptions.ProductAlreadyExistsException;
-import com.paygoal.api.common.exceptions.ProductNotFoundException;
 import com.paygoal.api.common.services.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,22 +29,22 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts() {
-        return new ResponseEntity<>(this.productService.getAllProducts(), HttpStatus.OK);
+        return new ResponseEntity<>(this.productService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ProductDto> createProduct(@RequestBody CreateProductRequest createProductRequest) {
-        return new ResponseEntity<>(this.productService.createProduct(createProductRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(this.productService.create(createProductRequest), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest updateProductRequest) {
-        return new ResponseEntity<>(this.productService.updateProduct(id, updateProductRequest), HttpStatus.OK);
+        return new ResponseEntity<>(this.productService.update(id, updateProductRequest), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
-        this.productService.deleteProduct(id);
+        this.productService.delete(id);
         return;
     }
 
@@ -69,6 +66,6 @@ public class ProductController {
             @RequestParam(defaultValue = "DESC") Sort.Direction sortDirection
             ) {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortDirection, sortBy));
-        return new ResponseEntity<>(this.productService.getPage(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(this.productService.findAll(pageable), HttpStatus.OK);
     }
 }

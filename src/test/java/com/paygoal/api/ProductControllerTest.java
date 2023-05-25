@@ -88,7 +88,7 @@ class ProductControllerTest {
 		createProductRequest.setQuantity(10L);
 		createProductRequest.setDescription("Test Description");
 
-		Mockito.when(productService.createProduct(Mockito.any(CreateProductRequest.class))).thenReturn(ProductDto.of(product1));
+		Mockito.when(productService.create(Mockito.any(CreateProductRequest.class))).thenReturn(ProductDto.of(product1));
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
 				.content(objectMapper.writeValueAsString(createProductRequest))
@@ -109,7 +109,7 @@ class ProductControllerTest {
 		createProductRequest.setQuantity(10L);
 		createProductRequest.setDescription("Test Description");
 
-		Mockito.when(productService.createProduct(Mockito.any(CreateProductRequest.class))).thenThrow(new ProductAlreadyExistsException());
+		Mockito.when(productService.create(Mockito.any(CreateProductRequest.class))).thenThrow(new ProductAlreadyExistsException());
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
 				.content(objectMapper.writeValueAsString(createProductRequest))
@@ -126,7 +126,7 @@ class ProductControllerTest {
 		createProductRequest.setDescription("Test Description");
 
 		Mockito
-				.when(productService.updateProduct(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
+				.when(productService.update(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
 				.thenReturn(ProductDto.of(product1));
 
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/{id}", 1L)
@@ -149,7 +149,7 @@ class ProductControllerTest {
 		updateProductRequest.setDescription("Test Description");
 
 		Mockito
-				.when(productService.updateProduct(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
+				.when(productService.update(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
 				.thenThrow(new ProductAlreadyExistsException());
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/{id}", 1L)
 				.content(objectMapper.writeValueAsString(updateProductRequest))
@@ -166,7 +166,7 @@ class ProductControllerTest {
 		updateProductRequest.setDescription("Test Description");
 
 		Mockito
-				.when(productService.updateProduct(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
+				.when(productService.update(Mockito.anyLong(), Mockito.any(UpdateProductRequest.class)))
 				.thenThrow(new ProductNotFoundException());
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/{id}", 1L)
 				.content(objectMapper.writeValueAsString(updateProductRequest))
@@ -182,7 +182,7 @@ class ProductControllerTest {
 
 	@Test
 	public void testGetAllProducts() throws Exception {
-		Mockito.when(productService.getAllProducts()).thenReturn(List.of(ProductDto.of(product1), ProductDto.of(product2)));
+		Mockito.when(productService.getAll()).thenReturn(List.of(ProductDto.of(product1), ProductDto.of(product2)));
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
@@ -223,7 +223,7 @@ class ProductControllerTest {
 	public void testGetProductPage() throws Exception {
 		Page<ProductDto> productPage = new PageImpl<>(List.of(ProductDto.of(product1), ProductDto.of(product2)));
 
-		Mockito.when(productService.getPage(Mockito.any(Pageable.class))).thenReturn(productPage);
+		Mockito.when(productService.findAll(Mockito.any(Pageable.class))).thenReturn(productPage);
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/page")
 				.param("pageNo", "0")
