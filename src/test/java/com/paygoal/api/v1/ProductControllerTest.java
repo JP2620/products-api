@@ -71,6 +71,9 @@ class ProductControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.price", Matchers.is(100)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.quantity", Matchers.is(10)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Test Description 1")));
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/2"))
+				.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 
 	@Test
